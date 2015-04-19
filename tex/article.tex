@@ -106,7 +106,36 @@ TODO
 We first present a complete example of a Tibor's configuration file, and then
 we will comment on its features.
 
-TODO
+\begin{verbatim}
+{
+  "path" : "/root/tibor/images",
+  "max_file_size" : "1M",
+  "l1_size": 10,
+  "mushrooms" : {
+    "1.png" : { 
+      "on_delete" : "drop",		
+      "on_modify" : "update",
+      "on_attrib" : "keep",
+      "on_rename" : "follow",
+      "on_l1": true
+    },
+    "2.png" : { 
+      "on_delete" : "drop",		
+      "on_modify" : "update",
+      "on_attrib" : "keep",
+      "on_rename" : "follow",
+      "on_l1": false 
+     }
+}
+\end{verbatim}
+
+Tibor supports some expected settings, such as the root path of the files
+served, the size of the L1 cache in MB and in the number of files. In the
+\texttt{mushrooms} section the user can specify which files are stored in the
+cache and with which policies. For example, the policy ``\texttt{"on\_delete":
+"keep"}'' specifies that, on file cancellation, the file should stay in the
+cache, while ``\texttt{"on\_attrib": "drop"}'' says that, following a change in
+permissions, the file should be evicted from the cache.
 
 We remark a feature afforded by Tibor's unique architecture: it is possible to
 invalidate a single cached element just by changing its permissions, provided
@@ -116,7 +145,34 @@ The authors recognize that configuring a large cache could prove to be tedious.
 Therefore, they are planning to include the possibility of defining \emph{memory pools}
 described by regular expressions, as in the following example:
 
-TODO
+\begin{verbatim}
+{
+
+  [...]
+
+  "pools" : {
+    "all_images" : {
+      "filename_pattern" : ".*\\.jpg$", 	
+      "size" : "10M", 
+      "on_delete" : "drop",		
+      "on_modify" : "update",
+      "on_attrib" : "keep",
+      "on_rename" : "follow"
+    },
+    "text_files" : {
+      "filename_pattern" : ".*\\.txt$", 
+      "size" : "10M",
+      "on_delete" : "drop",		
+      "on_modify" : "update",
+      "on_attrib" : "keep",
+      "on_rename" : "follow"
+    }
+  }
+
+  [...]
+
+}
+\end{verbatim}
 
 \section{Internals}
 TODO
