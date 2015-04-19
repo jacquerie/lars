@@ -11,6 +11,7 @@
 \fi
 
 \usepackage{hyperref}
+\usepackage[utf8]{inputenc}
 
 % correct bad hyphenation here
 \hyphenation{}
@@ -69,9 +70,10 @@ The authors propose Tibor, a novel solution written in C as a stand-alone
 library with minimal dependencies. To demonstrate its versatility, the authors
 provide a proof-of-concept integration with Elli, an Erlang web server.
 
-Even if this won't provide a solution to the problem the authors are facing,
-we confide that this integration constitutes sufficient proof of the wide
-applicability of this solution to disparate domains.
+Even if this won't provide a solution to the problem the authors are facing, we
+confide that this integration constitutes sufficient proof of the wide
+applicability of this solution to disparate domains\footnote{Possibly including
+the problem of visiting California, or at least getting a few t-shirts.}.
 
 \hfill DL, JN, LR, and JS
  
@@ -89,7 +91,10 @@ format. In the third section we will describe its format, the currently
 supported features and the plans for extending them.
 
 In the fourth section we will describe Jiří, the mechanism that Tibor uses to
-communicate with the Elli web server.
+communicate with the Elli web server. As it will be clear from the discussion,
+communicating between BEAM, the Erlang Virtual Machine, and \texttt{tibord},
+the daemonized version of the Tibor library, requires a little ingenuity and
+some knowledge of the inner working of these two pieces of software.
 
 Finally, in the last section, we will describe the Simko prototype to visualize
 and provide guidance in improving Tibor's performance.
@@ -98,6 +103,19 @@ and provide guidance in improving Tibor's performance.
 TODO
 
 \section{Configuration}
+We first present a complete example of a Tibor's configuration file, and then
+we will comment on its features.
+
+TODO
+
+We remark a feature afforded by Tibor's unique architecture: it is possible to
+invalidate a single cached element just by changing its permissions, provided
+that the appropriate policy was selected during configuration.
+
+The authors recognize that configuring a large cache could prove to be tedious.
+Therefore, they are planning to include the possibility of defining \emph{memory pools}
+described by regular expressions, as in the following example:
+
 TODO
 
 \section{Internals}
@@ -106,10 +124,26 @@ TODO
 \section{Simko: a visualization layer for Tibor}
 While developing Tibor, the authors noticed that its users could benefit from
 inspecting the status of the cache and diagnosing its inefficiencies, either
-caused by misconfiguration or by bugs in the software.
+caused by misconfiguration or by bugs in the software. Therefore the authors
+decided to implement a graphical tool that would allow the users in easily
+identifying missed opportunities for optimization and wasted resources.
 
-The authors decided to implement a tool that would allow the users to easily identify
-missed opportunities for optimization
+Since Tibor's support for logging is still in its infancy, the communication
+between Simko and Tibor is achieved by reading and writing shared files in the
+CSV format. We auspicate that in the future a more robust medium of
+communication is estabilished between these two softwares.
+
+Despite this limitation, Simko can show the current status of the cache,
+automatically refreshing every 5 seconds. The colors and the lenghts of the
+bars encode the number of times an item was accessed and found in L1, L2 or not
+found at all.
+
+The user can immediately see which files where accessed often despite not being
+picked for the cache. On the other hand, she can also see which files she
+selected weren't accessed as much as she expected.
+
+Simko goes even further by automatically suggesting which files should be
+evicted by the user from the cache and which files should be included instead.
 
 \section{Conclusion}
 In this paper we presented Tibor, an event-driven server-side cache for static
